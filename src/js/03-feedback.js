@@ -2,13 +2,28 @@ import throttle from 'lodash.throttle';
 
 const form = document.querySelector('.feedback-form');
 
-form.addEventListener('submit', onSubmit);
 form.addEventListener('input', throttle(onInput, 500));
+form.addEventListener('submit', onSubmit);
 
-const dataResult = {};
+let dataResult = {};
 initForm();
 
 //
+
+function onInput(event) {
+  // dataResult[event.target.name] = event.target.value;
+  // localStorage.setItem('feedback-form-state', JSON.stringify(dataResult));
+
+  dataResult = localStorage.getItem('feedback-form-state');
+  if (dataResult) {
+    dataResult = JSON.parse(dataResult);
+  } else {
+    dataResult = {};
+  }
+
+  dataResult[event.target.name] = event.target.value;
+  localStorage.setItem('feedback-form-state', JSON.stringify(dataResult));
+}
 
 function onSubmit(event) {
   event.preventDefault();
@@ -18,18 +33,9 @@ function onSubmit(event) {
   if (!email.value || !message.value) {
     return alert('Будь ласка заповніть всі поля!');
   }
-
+  console.log(dataResult);
   form.reset();
   localStorage.clear();
-  console.log(dataResult);
-}
-
-//
-
-function onInput(event) {
-  dataResult[event.target.name] = event.target.value;
-
-  localStorage.setItem('feedback-form-state', JSON.stringify(dataResult));
 }
 
 //
